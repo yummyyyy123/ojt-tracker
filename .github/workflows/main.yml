@@ -22,17 +22,16 @@ jobs:
     - name: Set up Android SDK
       uses: android-actions/setup-android@v3
       
-    - name: Cache Gradle
-      uses: actions/cache@v4
-      with:
-        path: |
-          app/.gradle/caches
-          app/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-${{ hashFiles('app/**/*.gradle*', 'app/**/gradle-wrapper.properties') }}
-        
-    - name: Create Gradle Wrapper Files
+    - name: Move build files to root
       run: |
-        cd app
+        cp app/build.gradle .
+        cp app/src/main/AndroidManifest.xml .
+        mkdir -p src/main/java/com/ojttracker
+        mkdir -p src/main/res
+        cp -r app/src/main/* src/main/
+        
+    - name: Create Gradle Wrapper
+      run: |
         mkdir -p gradle/wrapper
         echo 'distributionBase=GRADLE_USER_HOME' > gradle/wrapper/gradle-wrapper.properties
         echo 'distributionPath=wrapper/dists' >> gradle/wrapper/gradle-wrapper.properties
@@ -46,12 +45,10 @@ jobs:
         curl -L -o gradle/wrapper/gradle-wrapper.jar https://raw.githubusercontent.com/gradle/gradle/v8.4.0/gradle/wrapper/gradle-wrapper.jar
         
     - name: Build Debug APK
-      run: |
-        cd app
-        ./gradlew assembleDebug
+      run: ./gradlew assembleDebug
       
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: app-debug.apk
-        path: app/build/outputs/apk/debug/app-debug.apk
+        path: build/outputs/apk/debug/app-debug.apk
