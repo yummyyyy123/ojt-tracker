@@ -26,6 +26,12 @@ jobs:
         echo 'zipStoreBase=GRADLE_USER_HOME' >> gradle/wrapper/gradle-wrapper.properties
         echo 'zipStorePath=wrapper/dists' >> gradle/wrapper/gradle-wrapper.properties
         
+        # Create gradle.properties with AndroidX enabled
+        echo 'android.useAndroidX=true' > gradle.properties
+        echo 'android.enableJetifier=true' >> gradle.properties
+        echo 'org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8' >> gradle.properties
+        echo 'android.nonTransitiveRClass=true' >> gradle.properties
+        
         # Download gradle wrapper files
         curl -L -o gradlew https://raw.githubusercontent.com/gradle/gradle/v8.4.0/gradlew
         chmod +x gradlew
