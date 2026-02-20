@@ -14,10 +14,24 @@ jobs:
         distribution: 'temurin'
     - uses: android-actions/setup-android@v3
     - run: |
+        # Create gradle wrapper directory
+        mkdir -p gradle/wrapper
+        
+        # Create gradle-wrapper.properties file
+        echo 'distributionBase=GRADLE_USER_HOME' > gradle/wrapper/gradle-wrapper.properties
+        echo 'distributionPath=wrapper/dists' >> gradle/wrapper/gradle-wrapper.properties
+        echo 'distributionUrl=https\://services.gradle.org/distributions/gradle-8.4-bin.zip' >> gradle/wrapper/gradle-wrapper.properties
+        echo 'networkTimeout=10000' >> gradle/wrapper/gradle-wrapper.properties
+        echo 'validateDistributionUrl=true' >> gradle/wrapper/gradle-wrapper.properties
+        echo 'zipStoreBase=GRADLE_USER_HOME' >> gradle/wrapper/gradle-wrapper.properties
+        echo 'zipStorePath=wrapper/dists' >> gradle/wrapper/gradle-wrapper.properties
+        
+        # Download gradle wrapper files
         curl -L -o gradlew https://raw.githubusercontent.com/gradle/gradle/v8.4.0/gradlew
         chmod +x gradlew
-        mkdir -p gradle/wrapper
         curl -L -o gradle/wrapper/gradle-wrapper.jar https://raw.githubusercontent.com/gradle/gradle/v8.4.0/gradle/wrapper/gradle-wrapper.jar
+        
+        # Build APK
         ./gradlew assembleDebug
     - uses: actions/upload-artifact@v4
       with:
